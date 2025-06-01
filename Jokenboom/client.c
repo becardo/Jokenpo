@@ -20,44 +20,58 @@ int main(int argc, char **argv){
 
     struct sockaddr_storage server_addr; // Armazena o endereço do servidor
 
+    char *server_ip = argv[1];
+    char *port = argv[2];
+
     // Configurar o endereço de rede (v4 ou v6) em uma estrutura do tipo sockaddre_storage
-    configura_addr(argv[1], argv[2], &server_addr);
+    configura_addr(server_ip, port, &server_addr);
 
     int sock;
     sock = socket(server_addr.ss_family, SOCK_STREAM, 0); // Criação de um socket do tipo SOCK_STREAM
 
     struct sockaddr *addr = (struct sockaddr *)(&server_addr); // Faz um cast de sockaddr_storage para sockaddr
 
-    int conn = connect(sock, addr, sizeof(server_addr)); // Tenta conexão com o servidor através do socket criado
+    connect(sock, addr, sizeof(server_addr)); // Tenta conexão com o servidor através do socket criado
 
-    if ( conn == 0) { // Se conexão bem-sucedida, exibe mensagem de exito
-        printf("Conectado ao servidor.\n");
-    }
+    printf("Conectado ao servidor.\n");
 
-    // Lógica do Jokenboom
     while(1){
+        // Loop com toda a lógica do jogo, após conexão com o servidor
         GameMessage msg_recebida_server, msg_resposta; 
         memset(&msg_resposta, 0, sizeof(GameMessage));
 
         recv(sock, &msg_recebida_server, sizeof(GameMessage), 0); 
 
-        // Verifica o tipo da mensagem recebida
-        if (msg_recebida_server.type == MSG_REQUEST) {
-
+        // Laço if - else if para verificar o tipo de mensagem recebida pelo servidor
+        if (msg_recebida_server.type == MSG_REQUEST){
+            // Mensagem de solicitação de ataque, e envio da escolha 
             printf("%s\n", msg_recebida_server.message);
             msg_resposta.type = MSG_RESPONSE;
             scanf("%d", &msg_resposta.client_action);
 
             send(sock, &msg_resposta, sizeof(GameMessage), 0);
-        } 
-        
-        else if (msg_recebida_server.type == MSG_ERROR) {
 
+        } else if (msg_recebida_server.type == MSG_ERROR || msg_recebida_server.type == MSG_RESULT){
+            // MSG_ERROR e MSG_RESULT apenas enviam uma mensagem a ser exibida no terminal
             printf("%s\n", msg_recebida_server.message);
+
+        } else if (msg_recebida_server.type == MSG_PLAY_AGAIN_REQUEST){
+            // Mensagem de solicitação se quer jogar novamente, e envio da escolha
+            printf("%s\n", msg_recebida_server.message);
+            msg_resposta.type = MSG_PLAY_AGAIN_RESPONSE;
+            scanf("%d", &msg_resposta.client_action);
+
+            send(sock, &msg_resposta, sizeof(GameMessage), 0);
+
+        } else if(msg_recebida_server.type == MSG_END){
+            // Mensagem de finalização, exibindo no terminal do cliente o placar com os parametros passados através de cliente.wins e server.wins
+            printf("%s\n", msg_recebida_server.message);
+            printf("Placar final: Você %d x %d Servidor\n", msg_recebida_server.client_wins, msg_recebida_server.server_wins);
+            printf("Obrigado por jogar!\n");
+            break;
         }
     }
-   
 
-    close(sock); // Fecha o socket
-    return 0;
+close(sock); // Fecha o socket
+return 0;
 }
