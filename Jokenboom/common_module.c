@@ -1,39 +1,27 @@
 #include "common_module.h"
 
+#include <netdb.h>
+#include <string.h>
+#include <stdio.h>
+
 /* Alguns trechos de código foram inspirados nas aplicações da Playlist de Programação de Sockets
 do Prof. Ítalo Cunha, e serão devidamente sinalizados. 
-Vídeo-aula disponível em: https://www.youtube.com/watch?v=tJ3qNtv0HVs&list=PLyrH0CFXIM5Wzmbv-lC-qvoBejsa803Qk&ab_channel=%C3%8DtaloCunha*/
+Vídeo-aula disponível em: https://www.youtube.com/watch?v=tJ3qNtv0HVs&list=PLyrH0CFXIM5Wzmbv-lC-qvoBejsa803Qk&ab_channel=%C3%8DtaloCunha */
 
 // Função para configurar o endereço de rede (v4 ou v6) em uma estrutura do tipo sockaddre_storage
-/* Trecho inspirado na aula do Prof. Ítalo Cunha */
 int configura_addr(const char *str_addr, const char *porta_str, struct sockaddr_storage *server_addr){
 
-    uint16_t porta_int = htons((uint16_t)atoi(porta_str)); // Converte a string da porta para um número intero
-    // htons converte o número inteiro da porta para big-endian (usado em rede)
+    struct addrinfo tipo_protocolo, *resultados_gerados;
+    memset(&tipo_protocolo, 0, sizeof(tipo_protocolo));
+    tipo_protocolo.ai_family = AF_UNSPEC;  // Campo ai_family como AF_UNSPEC (aceita IPv4 e IPv6)
+    tipo_protocolo.ai_socktype = SOCK_STREAM;  // Tipo de socket (TCP)
 
-    struct in_addr endereco_v4; 
-    struct in6_addr endereco_v6; 
+    getaddrinfo(str_addr, porta_str, &tipo_protocolo, &resultados_gerados);  // getaddrinfo resolve str_addr e porta_str com os critérios de tipo_protocolo,
+    // e preenche a lista de resultados em resultados_gerados.
 
-    if(inet_pton(AF_INET, str_addr, &endereco_v4)){ // inet_pton converte str_addr para binário, e testa se é v4
-        struct sockaddr_in *addr_v4 = (struct sockaddr_in *)server_addr; // conversão de tipo, para struct sockaddr_in especifica para IPv4
-        addr_v4 -> sin_family = AF_INET; // Definição da família
-        addr_v4 -> sin_port = porta_int; // sin_port armazena a porta em formato big-endian
-        addr_v4 -> sin_addr = endereco_v4; // sin_addr armazena o endereço em binário
-        return 0;
-    }
-
-    if(inet_pton(AF_INET6, str_addr, &endereco_v6)){
-        struct sockaddr_in6 *addr_v6 = (struct sockaddr_in6 *)server_addr;
-        addr_v6 -> sin6_family = AF_INET6;
-        addr_v6 -> sin6_port = porta_int;
-        memcpy(&(addr_v6 -> sin6_addr), &endereco_v6, sizeof(endereco_v6));
-        /* memcpy foi utilizado para copiar os 16 bytes do endereço IPv6 (endereco_v6) para o campo sin6_addr, 
-        já que sin6_addr é um array de bytes e endereco_v6 é uma estrutura in6_addr. Isso garante que todos
-        os bytes do endereço sejam copiados da maneira correta */
-        return 0;
-    }
-
-    return -1;
+    memcpy(server_addr, resultados_gerados->ai_addr, resultados_gerados->ai_addrlen);  // Cópia do endereço resolvido
+    freeaddrinfo(resultados_gerados);  // Libera a memória alocada por getaddrinfo
+    return 0;
 }
 
 // Função para configurar um endereço de servidor para determinada rede 
