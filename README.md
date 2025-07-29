@@ -1,6 +1,6 @@
 # 🧠💥 Jokenpoo — Batalha Estratégica em Rede
 
-**Jokenpoo** é um jogo de batalha por turnos no terminal, desenvolvido em linguagem C com arquitetura cliente-servidor usando **sockets POSIX**. Ele funciona com **IPv4 e IPv6** e simula um combate entre dois jogadores por meio de ataques estratégicos.
+**Jokenpoo** é um jogo de batalha por turnos no terminal, desenvolvido em linguagem C com arquitetura cliente-servidor usando **sockets POSIX**. Ele funciona com **IPv4 e IPv6** e simula um combate entre cliente e servidor por meio de ataques estratégicos.
 
 > Inspirado em pedra-papel-tesoura, mas com **ataques militares cibernéticos** com regras mais complexas.
 
