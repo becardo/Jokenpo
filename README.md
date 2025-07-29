@@ -38,12 +38,32 @@
 
 ---
 
-## 📦 Como compilar e jogar
+## 📦 Como compilar e jogar?
 
 ### ✅ Compilando
 
 ```bash
 gcc servidor.c -o servidor
 gcc cliente.c -o cliente
+```
 
-> Ou simplesmente executar o arquivo Makefile, digitando 'make' no Terminal.
+Ou simplesmente executar o arquivo Makefile, digitando 'make' no Terminal.
+
+### 🚀 Executando
+
+- Conectando Servidor 
+```bash
+./server v4 51511
+```
+
+- Conectando Cliente
+```bash
+./client 127.0.0.1 51511
+```
+Conectar-se ao IP 127.0.0.1 (IPv4) ou ::1 (IPv6)!
+
+---
+
+## 🧪 Testes locais
+Utilizar `tmux` ou `screen`, ou abrir várias abas de terminal.
+
