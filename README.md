@@ -1,5 +1,49 @@
-# TP1-RedesDeComputadores
+# 🧠💥 Jokenpoo — Batalha Estratégica em Rede
 
-Trabalho Prático 1 da disciplina DCC023 - Redes de Computadores.
+**Jokenpoo** é um jogo de batalha por turnos no terminal, desenvolvido em linguagem C com arquitetura cliente-servidor usando **sockets POSIX**. Ele funciona com **IPv4 e IPv6** e simula um combate entre dois jogadores por meio de ataques estratégicos.
 
-A aplicação consiste em um sistema cliente-servidor que realiza partidas de Jokenpo entre Humano (cliente) e Computador (servidor) com 5 jogadas possíveis, sendo que o cliente as escolhe manualmente, uma por vez, enquanto o servidor realiza uma escolha aleatória. 
+> Inspirado em pedra-papel-tesoura, mas com **ataques militares cibernéticos** com regras mais complexas.
+
+---
+
+## 🧨 Ataques disponíveis e regras
+
+| Ação             | Vence de…                             | Perde para…                            |
+|------------------|----------------------------------------|----------------------------------------|
+| **Nuclear Attack** | Cyber Attack, Drone Strike             | Intercept Attack, Bio Attack           |
+| **Intercept Attack** | Nuclear Attack, Bio Attack              | Cyber Attack, Drone Strike             |
+| **Cyber Attack** | Intercept Attack, Drone Strike         | Nuclear Attack, Bio Attack             |
+| **Drone Strike** | Intercept Attack, Bio Attack           | Nuclear Attack, Cyber Attack           |
+| **Bio Attack**   | Nuclear Attack, Cyber Attack           | Intercept Attack, Drone Strike         |
+
+---
+
+## 🚀 Funcionalidades
+
+- ✅ Jogo de Jokenpô com lógica de vitória, empate e derrota.
+- ✅ Modo cliente-servidor via terminal (sem interface gráfica).
+- ✅ Comunicação de rede com `socket()` e `bind()` nativos do C.
+- ✅ Suporte a **IPv4 (`AF_INET`)** e **IPv6 (`AF_INET6`)**.
+- ✅ Interface de linha de comando simples e interativa.
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+- Linguagem C
+- POSIX sockets
+- Protocolo TCP/IP
+- IPv4 e IPv6
+- Terminal/Linux
+
+---
+
+## 📦 Como compilar e jogar
+
+### ✅ Compilando
+
+```bash
+gcc servidor.c -o servidor
+gcc cliente.c -o cliente
+
+> Ou simplesmente executar o arquivo Makefile, digitando 'make' no Terminal.
